@@ -2,12 +2,17 @@ const express = require('express');
 const multer = require('multer');
 const { S3Client, ListObjectsV2Command } = require('@aws-sdk/client-s3');
 require('dotenv').config();
+const cors = require('cors');
 
 const app = express();
 const port = process.env.PORT || 3001;
 
 const accessKey = process.env.DO_SPACES_ACCESS_KEY;
 const secretKey = process.env.DO_SPACES_SECRET_KEY;
+
+app.use(cors({
+    origin: 'http://localhost:5173' // replace with your React app URL
+  }));
 
 const s3Client = new S3Client({
     region: 'nyc3',  // Your region
