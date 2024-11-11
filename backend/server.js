@@ -14,6 +14,8 @@ const secretKey = process.env.DO_SPACES_SECRET_KEY;
 
 app.use(cors({
     origin: 'https://sophiewalden.github.io/' // replace with your React app URL
+    ,methods: ['GET', 'POST'],
+  allowedHeaders: ['Content-Type'],
   }));
 
 const s3Client = new S3Client({
