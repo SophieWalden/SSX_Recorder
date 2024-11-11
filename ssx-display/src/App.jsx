@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { createHashRouter, RouterProvider } from 'react-router-dom'; // Use createHashRouter
 import Homepage from './components/homepage';
 import VideoWatcher from './components/videoWatcher';
 import './App.css';
@@ -62,7 +62,7 @@ function App() {
   }, [stats]);
 
   // Define the router with dynamic route for /watch/:id
-  const router = createBrowserRouter([
+  const router = createHashRouter([ // Switch to createHashRouter
     {
       path: "/",
       element: <Homepage statsData={statsData} videos={videos} stats={stats} />,
@@ -71,11 +71,11 @@ function App() {
       path: "/watch/:id", // Dynamic route for viewing a specific video
       element: <VideoWatcher statsData={statsData} videos={videos} stats={stats} />,
     }
-  ], { basename: "/SSX_Recorder" });
+  ]);
 
   return (
     <div>
-      <RouterProvider router={router} basename="/SSX_Recorder"/>
+      <RouterProvider router={router} />
     </div>
   );
 }
