@@ -71,7 +71,7 @@ function App() {
       path: "/watch/:id", // Dynamic route for viewing a specific video
       element: <VideoWatcher statsData={statsData} videos={videos} stats={stats} />,
     }
-  ]);
+  ], { basename: "/SSX_Recorder" });
 
   return (
     <div>
