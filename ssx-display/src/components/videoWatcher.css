@@ -1,0 +1,136 @@
+#video-watcher-content {
+    display: flex;
+    height: 100vh;
+    width: 100vw;
+    box-sizing: border-box;
+    background-image: linear-gradient(rgb(135, 166, 199), rgb(77, 81, 158));
+    justify-content: space-evenly;
+    align-items: center;
+}
+
+video {
+    width: 60vw; /* Make video take up 70% of the width */
+    height: auto;
+    object-fit: cover;
+    border-radius: 10px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+}
+
+.watcher-right-content{
+    width: 30%;
+    height: 100%;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    flex-direction: column;
+}
+
+.homepage-button{
+    width: 15vw;
+    height: 8vh;
+    background-color: #3a4f79;
+}
+
+
+.sidebar {
+    width: 100%; /* Sidebar will take up 30% of the width */
+    background-color: #3a4f79;
+    color: white;
+    padding: 15px;
+    border-radius: 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    overflow-y: auto;
+}
+
+
+
+.sidebar h3 {
+    color: #fff;
+    font-size: 1.5vw;
+    margin-bottom: 10px;
+}
+
+.sidebar p {
+    color: #dcdcdc;
+    font-size: 1.25vw;
+    margin-bottom: 10px;
+}
+
+.stats-container {
+    margin-top: 20px;
+}
+
+.loading-message {
+    font-size: 1.5rem;
+    color: #666;
+}
+
+
+
+/* CSS */
+.button-30 {
+  align-items: center;
+  appearance: none;
+  border-radius: 4px;
+  border-width: 0;
+  box-shadow: rgba(45, 35, 66, 0.4) 0 2px 4px,rgba(45, 35, 66, 0.3) 0 7px 13px -3px,#D6D6E7 0 -3px 0 inset;
+  box-sizing: border-box;
+  color: #ffffff;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: "JetBrains Mono",monospace;
+  justify-content: center;
+  line-height: 1;
+  list-style: none;
+  overflow: hidden;
+  padding-left: 16px;
+  padding-right: 16px;
+  position: relative;
+  text-align: left;
+  text-decoration: none;
+  transition: box-shadow .15s,transform .15s;
+  user-select: none;
+  -webkit-user-select: none;
+  touch-action: manipulation;
+  white-space: nowrap;
+  will-change: box-shadow,transform;
+  font-size: 18px;
+}
+
+.button-30:focus {
+  box-shadow: #D6D6E7 0 0 0 1.5px inset, rgba(45, 35, 66, 0.4) 0 2px 4px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+}
+
+.button-30:hover {
+  box-shadow: rgba(45, 35, 66, 0.4) 0 4px 8px, rgba(45, 35, 66, 0.3) 0 7px 13px -3px, #D6D6E7 0 -3px 0 inset;
+  transform: translateY(-2px);
+}
+
+.button-30:active {
+  box-shadow: #D6D6E7 0 3px 7px inset;
+  transform: translateY(2px);
+}
+
+.speed-graph {
+    background-color: #3a4f79;
+    width: 100%;  /* Make it take up the full width of its container */
+    height: 25vh; /* Adjust height to be a bit smaller, to fit neatly */
+    max-width: 30vw;  /* Ensure it does not exceed 30vw for responsive layout */
+    border-radius: 10px;  /* Smooth corners to match the overall design */
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); /* Adding subtle shadow for depth */
+    padding: 10px; /* Padding around the chart */
+    display: flex;  /* Aligning the content in a flex container */
+    justify-content: center;  /* Center the canvas inside the container */
+    align-items: center;  /* Center the canvas vertically */
+}
+
+/* Optional: If you want to improve responsiveness for mobile view */
+@media (max-width: 768px) {
+    .speed-graph {
+        width: 80vw;  /* Allow the graph to take up more space on smaller screens */
+        height: 40vh;  /* Make it taller for better mobile viewing */
+    }
+}
