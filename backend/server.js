@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const { S3Client, ListObjectsV2Command, GetObjectCommand  } = require('@aws-sdk/client-s3');
+const { S3Client, ListObjectsV2Command, GetObjectCommand, PutObjectCommand, GetObjectCommand, DeleteObjectCommand  } = require('@aws-sdk/client-s3');
 require('dotenv').config();
 const cors = require('cors');
 const path = require('path');
@@ -29,29 +29,6 @@ const s3Client = new S3Client({
 
 const upload = multer({ dest: 'uploads/' });
 
-app.post('/upload', upload.single('video'), async (req, res) => {
-    try {
-      // Get the uploaded file from req.file
-      const file = req.file;
-  
-      // Create the params for uploading to the DigitalOcean Space
-      const uploadParams = {
-        Bucket: 'ssx-tricky-video-clips',
-        Key: `videos/${file.filename}`, // Key is the path where the file will be saved in the Space
-        Body: file.buffer, // The content of the uploaded file
-        ContentType: file.mimetype, // Mime type of the file (e.g., video/mp4)
-        ACL: 'public-read', // Make the file publicly accessible
-      };
-  
-      // Send the upload request
-      const data = await s3Client.send(new PutObjectCommand(uploadParams));
-      
-      res.json({ success: true, message: 'File uploaded successfully!', data });
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      res.status(500).json({ success: false, message: 'Error uploading file', error: error.message });
-    }
-  });
 
   app.get('/videos', async (req, res) => {
     try {

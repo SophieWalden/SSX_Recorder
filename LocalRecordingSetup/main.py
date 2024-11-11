@@ -6,11 +6,15 @@ import numpy as np
 import asyncio
 import obsws_python as obs
 from termcolor import colored
+import cv2
+from skimage.metrics import structural_similarity as ssim
+import pyautogui
+from uploadVideo import process_new_run
 
 pytesseract.pytesseract.tesseract_cmd = r'C:/Program Files/Tesseract-OCR/tesseract.exe' 
 
 regions = {"race_start": (823, 471, 1054-823, 604-471), "race_end": (672, 367, 1250-672, 488-367), "death": (256, 24, 1659-256, 1074-24),
-           "speed": (350, 925, 460-350, 980-925)}
+           "speed": (350, 925, 460-350, 980-925), "level_id": (257, 26, 714-257, 429-26)}
 thresholds = {"race_start": 0.05, "race_end": 0.25, "death": 0.95, "speed": 0.1}
 colors = {"race_start": [(0, 160, 0), (50, 250, 50)], "race_end": [(210, 156, 5), (250, 196, 45)], "death": [(115,115,115), (140,140,140)],
             "speed": [(230, 230, 230), (250, 250, 250)]}
@@ -97,6 +101,10 @@ def move_recording(stats):
 
     print(f"{colored(f'ACTION - Saved Run', 'blue')}")
 
+    return storage_name
+
+
+
 
 def delete_last_recording():
     wanted_file = sorted(item for item in glob.glob("*.mp4", root_dir=PATH))[-1]
@@ -105,9 +113,48 @@ def delete_last_recording():
 
 
 
+def save_level_reference(level_name, image_chunk):
+    # Convert to HSV color space
+    hsv_image = cv2.cvtColor(image_chunk, cv2.COLOR_RGB2HSV)
+    
+    # Calculate color histogram
+    hist = cv2.calcHist([hsv_image], [0, 1], None, [50, 60], [0, 180, 0, 256])
+    hist = cv2.normalize(hist, hist).flatten()
+    
+    # Save histogram as reference (use a file or a dictionary in practice)
+    np.save(f"{level_name}_hist.npy", hist)
+
+def capture_start_chunk():
+    screenshot = pyautogui.screenshot(region=regions["level_id"])
+    image_chunk = np.array(screenshot)
+    return image_chunk
+
+def load_reference_histograms(levels):
+    histograms = {}
+    for level in levels:
+        histograms[level] = np.load(f"histograms/{level}_hist.npy")
+    return histograms
+
+# Compare current level's histogram with reference histograms
+def identify_level(image_chunk, reference_histograms):
+    hsv_image = cv2.cvtColor(image_chunk, cv2.COLOR_RGB2HSV)
+    current_hist = cv2.calcHist([hsv_image], [0, 1], None, [50, 60], [0, 180, 0, 256])
+    current_hist = cv2.normalize(current_hist, current_hist).flatten()
+
+    similarities = {}
+    for level, ref_hist in reference_histograms.items():
+        # Calculate similarity using correlation
+        similarity = cv2.compareHist(current_hist, ref_hist, cv2.HISTCMP_CORREL)
+        similarities[level] = similarity
+
+    # Identify the level with the highest similarity score
+    identified_level = max(similarities, key=similarities.get)
+    return identified_level
+
 def monitor_game(ws):
     race_started = False
-    race_stats = {"startedTime": None, "deaths": [], "speed": [], "endTime": None}
+    race_stats = {"startedTime": None, "deaths": [], "speed": [], "endTime": None, "trackName": None}
+    reference_histograms = load_reference_histograms(["alaska", "aloha", "garibaldi", "snowdream", "elysium", "mesablanca", "merqury", "tokyo"])
 
     while True:
         if text_found("race_start"):
@@ -119,12 +166,15 @@ def monitor_game(ws):
                     time.sleep(ACTION_COOLDOWN)
                     delete_last_recording()
 
-            
+                level_name = identify_level(capture_start_chunk(), reference_histograms)
+                print(f"{colored(f'LEVEL - {level_name}', 'yellow')}")
+
                 # Starting new race
                 race_stats["startedTime"] = int(time.perf_counter())
                 race_stats["deaths"] = []
                 race_stats["speed"] = {}
-                
+                race_stats["trackName"] = level_name 
+
                 if not MOCK_MODE:
                     start_recording(ws)
 
@@ -135,9 +185,13 @@ def monitor_game(ws):
                 stop_recording(ws)
                 time.sleep(ACTION_COOLDOWN)
 
-                move_recording(race_stats)
+                uploadId = move_recording(race_stats)
+                startUploadTime = time.perf_counter()
+                process_new_run(uploadId, race_stats["trackName"], race_stats["endTime"] - race_stats["startedTime"])
+                print(f"{colored(f'ACTION - FILE UPLOADED - {int(time.perf_counter() - startUploadTime)}s', 'cyan')}")
 
-            race_stats["startedTime"] = None            
+            race_stats["startedTime"] = None        
+
 
 
         if text_found("death"):
