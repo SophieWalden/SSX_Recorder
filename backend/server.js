@@ -4,7 +4,7 @@ const { S3Client, ListObjectsV2Command } = require('@aws-sdk/client-s3');
 require('dotenv').config();
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 const accessKey = process.env.DO_SPACES_ACCESS_KEY;
 const secretKey = process.env.DO_SPACES_SECRET_KEY;
@@ -59,5 +59,5 @@ app.post('/upload', upload.single('video'), async (req, res) => {
   });
 
   app.listen(port, () => {
-    console.log(`Server is running at http://localhost:${port}`);
+    console.log(`Server is running on port ${port}`);
   });
