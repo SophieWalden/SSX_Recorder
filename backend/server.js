@@ -1,8 +1,10 @@
 const express = require('express');
 const multer = require('multer');
-const { S3Client, ListObjectsV2Command } = require('@aws-sdk/client-s3');
+const { S3Client, ListObjectsV2Command, GetObjectCommand  } = require('@aws-sdk/client-s3');
 require('dotenv').config();
 const cors = require('cors');
+const path = require('path');
+const fs = require('fs');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -63,28 +65,39 @@ app.post('/upload', upload.single('video'), async (req, res) => {
     }
   });
 
-const baseDir = path.join(__dirname, '.');
-app.get('/api/json/:filename', (req, res) => {
-    const { filename } = req.params; // Extract filename from the URL parameter
-
-    // Construct the full path to the requested JSON file
-    const filePath = path.join(baseDir, `${filename}.json`);
-
-    // Check if the file exists
-    fs.exists(filePath, (exists) => {
-        if (!exists) {
-        return res.status(404).json({ message: 'File not found' });
+  app.get('/api/json/:filename', async (req, res) => {
+    let { filename } = req.params; // Extract filename from the URL parameter
+    const filePath = `${filename}/stats.json`; // File path in your DigitalOcean Space
+  
+    try {
+      // Fetch the stats.json file from DigitalOcean Space
+      const command = new GetObjectCommand({
+        Bucket: 'ssx-tricky-video-clips',  // Your Space name
+        Key: filePath,  // Path to the file in the Space
+      });
+  
+      const data = await s3Client.send(command);
+      
+      // Read the body of the response stream
+      let fileContents = '';
+      data.Body.on('data', chunk => {
+        fileContents += chunk;
+      });
+      
+      // Once the entire file is read, send the JSON response
+      data.Body.on('end', () => {
+        try {
+          res.json(JSON.parse(fileContents));  // Return the JSON contents
+        } catch (error) {
+          res.status(500).json({ message: 'Error parsing JSON' });
         }
-
-        // Read and send the contents of the JSON file
-        fs.readFile(filePath, 'utf8', (err, data) => {
-        if (err) {
-            return res.status(500).json({ message: 'Error reading file' });
-        }
-        res.json(JSON.parse(data)); // Return the JSON contents
-        });
-    });
-});
+      });
+  
+    } catch (error) {
+      console.error('Error fetching JSON file:', error);
+      res.status(500).json({ message: 'Error fetching JSON file', error: error.message });
+    }
+  });
 
 app.listen(port, () => {
 console.log(`Server is running on port ${port}`);
