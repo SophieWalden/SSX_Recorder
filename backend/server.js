@@ -13,7 +13,7 @@ const accessKey = process.env.DO_SPACES_ACCESS_KEY;
 const secretKey = process.env.DO_SPACES_SECRET_KEY;
 
 app.use(cors({
-    origin: 'http://localhost:5173' // replace with your React app URL
+    origin: 'https://sophiewalden.github.io/SSX_Recorder/' // replace with your React app URL
   }));
 
 const s3Client = new S3Client({
