@@ -63,6 +63,29 @@ app.post('/upload', upload.single('video'), async (req, res) => {
     }
   });
 
-  app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
-  });
+const baseDir = path.join(__dirname, '.');
+app.get('/api/json/:filename', (req, res) => {
+    const { filename } = req.params; // Extract filename from the URL parameter
+
+    // Construct the full path to the requested JSON file
+    const filePath = path.join(baseDir, `${filename}.json`);
+
+    // Check if the file exists
+    fs.exists(filePath, (exists) => {
+        if (!exists) {
+        return res.status(404).json({ message: 'File not found' });
+        }
+
+        // Read and send the contents of the JSON file
+        fs.readFile(filePath, 'utf8', (err, data) => {
+        if (err) {
+            return res.status(500).json({ message: 'Error reading file' });
+        }
+        res.json(JSON.parse(data)); // Return the JSON contents
+        });
+    });
+});
+
+app.listen(port, () => {
+console.log(`Server is running on port ${port}`);
+});
