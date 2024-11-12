@@ -45,33 +45,28 @@ const upload = multer({ dest: 'uploads/' });
   });
 
   app.get('/api/json/:filename', async (req, res) => {
-    let { filename } = req.params; // Extract filename from the URL parameter
-    const filePath = `${filename}/stats.json`; // File path in your DigitalOcean Space
+    let { filename } = req.params; 
+    const decodedFilename = decodeURIComponent(filename); // Decode the original file path
   
+    const filePath = `${decodedFilename}/stats.json`; // File path in your DigitalOcean Space
     try {
-      // Fetch the stats.json file from DigitalOcean Space
       const command = new GetObjectCommand({
-        Bucket: 'ssx-tricky-video-clips',  // Your Space name
-        Key: filePath,  // Path to the file in the Space
+        Bucket: 'ssx-tricky-video-clips',
+        Key: filePath,
       });
   
       const data = await s3Client.send(command);
-      
-      // Read the body of the response stream
       let fileContents = '';
       data.Body.on('data', chunk => {
         fileContents += chunk;
       });
-      
-      // Once the entire file is read, send the JSON response
       data.Body.on('end', () => {
         try {
-          res.json(JSON.parse(fileContents));  // Return the JSON contents
+          res.json(JSON.parse(fileContents));
         } catch (error) {
           res.status(500).json({ message: 'Error parsing JSON' });
         }
       });
-  
     } catch (error) {
       console.error('Error fetching JSON file:', error);
       res.status(500).json({ message: 'Error fetching JSON file', error: error.message });
