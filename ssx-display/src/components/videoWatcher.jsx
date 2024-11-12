@@ -19,16 +19,18 @@ const VideoWatcher = ({ statsData, videos }) => {
   const [graphSpeeds, setGraphSpeeds] = useState([]);
 
   useEffect(() => {
-    if (videos[id]) {
-      setVideoUrl(videos[id]);
-    }
 
-    if (statsData[id]) {
-      setVideoStats(statsData[id]);
+    if (id != null && Object.keys(statsData).length != 0 && Object.keys(statsData).includes(encodeURIComponent(id))) {
+      let videoUrl = `${id.split("/").slice(0, 3).join("/")}/run.mp4`;
+      setVideoUrl(videoUrl);
+      
+      let castedId = encodeURIComponent(id);
+      console.log(statsData, castedId);
+      setVideoStats(statsData[castedId]);
 
-      const speedData = Object.keys(statsData[id].speed).map(key => ({
+      const speedData = Object.keys(statsData[castedId].speed).map(key => ({
         time: parseInt(key),
-        speed: parseInt(statsData[id].speed[key]),
+        speed: parseInt(statsData[castedId].speed[key]),
       }));
 
       setGraphData(speedData);
@@ -150,7 +152,7 @@ const VideoWatcher = ({ statsData, videos }) => {
           <h3 className="button-30 homepage-button">Go back to Video Select</h3>
         </Link>
         <div className="sidebar">
-          <p><strong>Date:</strong> {new Date(Number(id) * 1000).toLocaleString()}</p>
+          <p><strong>Date:</strong> {new Date(Number(id.split("/").slice(2,3)[0]) * 1000).toLocaleString()}</p>
           <p><strong>Duration:</strong> {formattedDuration}</p>
           <p><strong>First Death at:</strong> {firstDeath}</p>
           <p><strong>Average Speed:</strong> {averageSpeed} km/h</p>

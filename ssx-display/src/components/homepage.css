@@ -1,6 +1,7 @@
 #homepage-content {
     width: 100vw;
-    height: 100vh;
+    height: 100%;
+    min-height: 100vh;
     flex-direction: column;
     display: flex;
     justify-content: center;
@@ -16,6 +17,48 @@
     text-align: center;
 }
 
+/* Level Selector */
+.level-selector {
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+.level-selector h2 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    color: black;
+}
+
+.level-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+}
+
+.level-button {
+    padding: 10px 20px;
+    background-color: rgb(137, 115, 67);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+    display: inline-block;
+}
+
+.level-button:hover {
+    background-color: rgb(123, 102, 59);
+    transform: translateY(-5px) scale(1.05);
+}
+
+.level-button.active {
+    background-color: rgb(101, 84, 47);
+}
+
+/* Sort Options */
 .sort-options {
     display: flex;
     gap: 20px;
@@ -44,6 +87,7 @@
     background-color: rgb(101, 84, 47);
 }
 
+/* Attempt List */
 .attempt-list {
     display: flex;
     flex-direction: column;
@@ -88,6 +132,7 @@
     color: #666;
 }
 
+/* Display Options */
 .displayOptions {
     display: flex;
     justify-content: center;
@@ -110,4 +155,12 @@
 
 .displayOptions:active {
     background-color: rgb(101, 84, 47);
+}
+
+/* No Attempts Message */
+.no-attempts {
+    font-size: 1.2rem;
+    color: #f77f00;
+    text-align: center;
+    margin-top: 20px;
 }

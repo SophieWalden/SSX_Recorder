@@ -23,7 +23,7 @@ function App() {
 
           if (item.includes(".mp4")) {
             videos[key] = item;
-          } else {
+          } else if (!item.includes("runLog")){
             stats[key] = item;
           }
         }
@@ -39,15 +39,15 @@ function App() {
     for (let i = 0; i < Object.keys(stats).length; i++) {
       let key = Object.keys(stats)[i];
       let fileName = stats[key];
-      const link = `https://ssx-tricky-videos-65fa04296737.herokuapp.com/api/json/${encodeURIComponent(key)}`;
-
+      key = encodeURIComponent(key)
+      const link = `https://ssx-tricky-videos-65fa04296737.herokuapp.com/api/json/${key}`;
+      
 
       console.log(link);
 
       fetch(link)
         .then(response => response.json())
         .then(data => {
-
           const averageSpeed = Math.round(Object.values(data.speed) // Get all values (strings)
               .map(value => parseInt(value)) // Convert each string to an integer
               .reduce((sum, value) => sum + value, 0) // Sum the values
