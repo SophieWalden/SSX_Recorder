@@ -1,6 +1,6 @@
 const express = require('express');
 const multer = require('multer');
-const { S3Client, ListObjectsV2Command, GetObjectCommand, PutObjectCommand, GetObjectCommand, DeleteObjectCommand  } = require('@aws-sdk/client-s3');
+const { S3Client, ListObjectsV2Command, PutObjectCommand, GetObjectCommand, DeleteObjectCommand  } = require('@aws-sdk/client-s3');
 require('dotenv').config();
 const cors = require('cors');
 const path = require('path');
