@@ -30,19 +30,19 @@ const s3Client = new S3Client({
 const upload = multer({ dest: 'uploads/' });
 
 
-  app.get('/videos', async (req, res) => {
-    try {
-      const data = await s3Client.send(new ListObjectsV2Command({ Bucket: 'ssx-tricky-video-clips' }));
-      
-      // Only return the file keys (paths)
-      const videoKeys = data.Contents.map(item => item.Key);
-  
-      res.json({ success: true, videos: videoKeys });
-    } catch (error) {
-      console.error('Error fetching video list:', error);
-      res.status(500).json({ success: false, message: 'Error fetching video list', error: error.message });
-    }
-  });
+app.get('/videos', async (req, res) => {
+  try {
+    const data = await s3Client.send(new ListObjectsV2Command({ Bucket: 'ssx-tricky-video-clips' }));
+
+    // Ensure Contents is not undefined and is an array
+    const videoKeys = (data.Contents || []).map(item => item.Key);
+
+    res.json({ success: true, videos: videoKeys });
+  } catch (error) {
+    console.error('Error fetching video list:', error);
+    res.status(500).json({ success: false, message: 'Error fetching video list', error: error.message });
+  }
+});
 
   app.get('/api/json/:filename', async (req, res) => {
     let { filename } = req.params; 
