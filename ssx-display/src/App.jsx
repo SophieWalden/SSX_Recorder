@@ -11,7 +11,7 @@ function App() {
 
   // Fetch list of videos and their stats on initial load
   useEffect(() => {
-    fetch("https://ssx-tricky-videos-65fa04296737.herokuapp.com/Videos")
+    fetch("https://ssx-tricky-videos-65fa04296737.herokuapp.com/videos")
       .then(response => response.json())
       .then(data => {
         let videos = {};

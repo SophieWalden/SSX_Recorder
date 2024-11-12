@@ -48,7 +48,7 @@ app.get('/videos', async (req, res) => {
     let { filename } = req.params; 
     const decodedFilename = decodeURIComponent(filename); // Decode the original file path
   
-    const filePath = `${decodedFilename}/stats.json`; // File path in your DigitalOcean Space
+    const filePath = `${decodedFilename}`; // File path in your DigitalOcean Space
     try {
       const command = new GetObjectCommand({
         Bucket: 'ssx-tricky-video-clips',
