@@ -25,7 +25,7 @@ function Homepage(props) {
             const statA = a[1];
             const statB = b[1];
             if (sortOption === 'averageSpeed') {
-                return statB.averageSpeed - statA.averageSpeed;
+                return (statA.endTime - statA.startedTime) - (statB.endTime - statB.startedTime);
             } else if (sortOption === 'deaths') {
                 return statA.deaths.length - statB.deaths.length;
             }
@@ -74,7 +74,7 @@ function Homepage(props) {
                                     className={`sort-button ${sortOption === 'averageSpeed' ? 'active' : ''}`}
                                     onClick={() => setSortOption('averageSpeed')}
                                 >
-                                    Sort by Average Speed
+                                    Sort by Time
                                 </button>
                                 <button
                                     className={`sort-button ${sortOption === 'deaths' ? 'active' : ''}`}
@@ -91,9 +91,9 @@ function Homepage(props) {
                                         <div key={key} className="attempt-item">
                                             <Link to={`/watch/${encodeURIComponent(key)}`} className="attempt-link">
                                                 <div className="attempt-details">
-                                                    <h3 className="attempt-title">{new Date(Number(decodeURIComponent(key).split("/").slice(2,3)[0]) * 1000).toLocaleString()}</h3>
+                                                    <h3 className="attempt-title">{new Date(Number(decodeURIComponent(key).split("/").slice(2,3)[0]) * 1000).toLocaleString()}, {value.endTime - value.startedTime}s</h3>
                                                     <p className="attempt-info">
-                                                        Time: {value.endTime - value.startedTime}s | Deaths: {value.deaths.length} | Avg Speed: {value.averageSpeed} km/h
+                                                        Deaths: {value.deaths.length} | Avg Speed: {value.averageSpeed} km/h
                                                     </p>
                                                 </div>
                                             </Link>
